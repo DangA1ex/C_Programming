@@ -55,15 +55,3 @@ In general, the execution of any of the programs above will is carried out by sp
   3.  One of the dangers of learning about forking processes is leaving unwanted processes active and wasting system time.  Make sure each process terminates cleanly when processing is completed.  Parent process should wait until the child processes complete, print a message and then quit. 
   
   4.  Your program should be robust. If any of the calls fail, it should print error message and exit with appropriate error code.  Always check for failure when invoking a system or library call.  
-
-### Material to be submitted:  
-
-  1.  Compress the source code of the programs into Prj1.tar (or Prj1.zip) file.  Use meaningful names for the file so that the contents of the file are obvious. A single makefile that makes the executables out of any of the source code MUSTbe provided in the compressed file.  
-  
-  2.  Submit a README file that lists the files you have submitted along with a one sentence explanation. Call it Prj1README. This file will also have time information inferred from problem #10. 
-  
-  3.  Only internal documentation is needed.  Please state clearly the purpose of each program at the start of the program.  Add comments to explain your program. (-5 points, if insufficient)  
-  
-  4.  Test runs: It is very important that you show that your program works for all possible inputs.  Submit online a single typescript file clearly showing the working of all the programs for correct input as well as graceful exit on error input. 
-  
-  5.  Submit on CSNS.
