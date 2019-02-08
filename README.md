@@ -9,7 +9,8 @@
 * Concurrent execution of processes.
 * Use Posix Pthread library for concurrency. 
 
-### Problem Statement: This project is to be developed in several small steps to help you understand the concepts better.  
+### Problem Statement: 
+This project is to be developed in several small steps to help you understand the concepts better.  
 
   1.  (System calls) Write a C program that makes compressed copy of an existing file of bits (0’s and 1’s) using system calls for file manipulation. For compression use the following rules: 
      a. Compress only the sequence of length >= 16 1’s or 0’s; for example a sequence of  26 0’s is replaced by -26- and a sequence of 78 1’s is replaced by +78+
@@ -44,7 +45,8 @@
   
   10. Compare the times for (i) sequential version (ii) forked (process) version and (iii) pthread version. Use a large data file so that times are significant. Record this information (inference) in your README file.
 
-### Implementation Details: In general, the execution of any of the programs above will is carried out by specifying the executable program name followed by the command line arguments.   
+### Implementation Details: 
+In general, the execution of any of the programs above will is carried out by specifying the executable program name followed by the command line arguments.   
   
   1.  See the man pages for more details about specific system or library calls and commands: UNIX fork(2), pipe(2), execve(2), execl(3), execlp(3), cat(1), wait(2) etc.  
   
