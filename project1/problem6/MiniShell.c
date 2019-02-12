@@ -9,18 +9,29 @@ void executeCommand(char *command);
 
 int main() {
 	char command[9999];
-    char commandPrompt[] = "myshell> ";
+    char commandPrompt[] = "shell> ";
+
+	printf("-------------------------------------------------------------------------\n");
+	printf("███╗   ███╗██╗███╗   ██╗██╗      ███████╗██╗  ██╗███████╗██╗     ██╗     \n");
+	printf("████╗ ████║██║████╗  ██║██║      ██╔════╝██║  ██║██╔════╝██║     ██║     \n");
+	printf("██╔████╔██║██║██╔██╗ ██║██║█████╗███████╗███████║█████╗  ██║     ██║     \n");
+	printf("██║╚██╔╝██║██║██║╚██╗██║██║╚════╝╚════██║██╔══██║██╔══╝  ██║     ██║     \n");
+	printf("██║ ╚═╝ ██║██║██║ ╚████║██║      ███████║██║  ██║███████╗███████╗███████╗\n");
+	printf("╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝      ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝\n");
+	printf("-------------------------------------------------------------------------\n");
+	printf("Mini-Shell that takes arguement-less commands.\n");
+	printf("-------------------------------------------------------------------------\n");
 
 	// loop endlessly until user inputs exit
 	while(1) {
 		printf("%s", commandPrompt);
 
-		/* Read command and cut off newline*/
+		// Read command and cut off newline
 		fgets(command, 9999, stdin);
 		command[strlen(command) - 1] = 0;
 
-		// checks for exit command
-		if(strcmp(command, "exit") == 0) {
+		// close shell if exit command detected
+		if (strcmp(command, "exit") == 0) {
 			break;
 		}
 
@@ -44,7 +55,7 @@ void executeCommand(char *command) {
 		args[0] = command;
 		args[1] = NULL;
 
-        // checks if execlp failed
+        // checks if execlp failed, if failed then invalid command
 		if (execvp(command, args) < 0) {
             printf("ERROR: Command '%s' not found.\n", command);
             exit(1);
