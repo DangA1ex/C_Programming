@@ -28,14 +28,18 @@ int main() {
 	while(1) {
 		printf("%s", commandPrompt);
         fgets(command, 9999, stdin);
+
+		// removes newline from input
         command[strcspn(command, "\n")] = '\0';
 
+		// checks if empty string was entered
         if (strlen(command) == 1) {
 		    continue;
 	    }
 
         processCommand(command, args);
 
+		// checks if exit was entered, if so ends program
         if (strcmp(command, "exit") == 0) {
             break;
         }
@@ -49,6 +53,8 @@ int main() {
 void processCommand(char *command, char **args) {
 	args[0] = strtok(command, " ");
     int i = 0;
+
+	// goes through command seperating by ' ' and adds to args
     while (args[i] != NULL)
     {
       i++;
