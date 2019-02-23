@@ -30,9 +30,9 @@ void MyCompression(void *arg)
         }
         else if (input->symbol == '1')
         {
-            putc('+', out);
-            fprintf(out, "%d", repeatedCount);
-            putc('+', out);
+            putc('+', input->out);
+            fprintf(input->out, "%d", repeatedCount);
+            putc('+', input->out);
         }
     }
     //This exits the pthread
@@ -48,12 +48,6 @@ int main(int argc, char **argv)
     for (int i = 0; i < 10; i++)
     {
         pthread_create(&tids[i], NULL, MyCompression, &input);
-    }
-
-    //Closes multiple threads
-    for (int i = 0; i < 10; i++)
-    {
-        pthread_join(&tids[i], NULL);
     }
 
     //Intializes a struct array for storing all the information
@@ -113,6 +107,13 @@ int main(int argc, char **argv)
         repeatedCount++;
         previousChar = currentChar;
     }
+
+    //Closes multiple threads
+    for (int i = 0; i < 10; i++)
+    {
+        pthread_join(&tids[i], NULL);
+    }
+
 
     fclose(out);
 }
