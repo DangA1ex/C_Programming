@@ -14,7 +14,6 @@ struct Info
     //The plus or minus symbol
     char *symbol;
     //Handles closing the file so all threads can access it
-    File *out;
 };
 
 void putCompression(FILE *out, int repeatedCount, char previousChar)
@@ -39,6 +38,9 @@ void putCompression(FILE *out, int repeatedCount, char previousChar)
 void initiateCompression(void *arg)
 {
     struct Info *input = (struct Info *)arg;
+    // Handle file output
+    FILE *out;
+    out = fopen(argv[2], "w");
     char previousChar = ' ';
     char currentChar;
     int repeatedCount = 0;
@@ -52,13 +54,13 @@ void initiateCompression(void *arg)
         {
             if (repeatedCount >= 16)
             {
-                putCompression(input->out, repeatedCount, previousChar);
+                putCompression(out, repeatedCount, previousChar);
             }
             else
             {
                 for (int i = 0; i < repeatedCount; i++)
                 {
-                    putc(previousChar, input->out);
+                    putc(previousChar, out);
                 }
             }
             repeatedCount = 0;
@@ -69,17 +71,21 @@ void initiateCompression(void *arg)
     }
 
     // For putting repeated 0's
-    if (repeatedCount != 0) {
-        if (repeatedCount >= 16) {
-            putCompression(input->out, repeatedCount, previousChar);
+    if (repeatedCount != 0)
+    {
+        if (repeatedCount >= 16)
+        {
+            putCompression(out, repeatedCount, previousChar);
         }
-        else {
-            for (int i = 0; i < repeatedCount; i++) {
-                putc(previousChar, input->out);
+        else
+        {
+            for (int i = 0; i < repeatedCount; i++)
+            {
+                putc(previousChar, out);
             }
         }
     }
-
+    
     pthread_exit(0);
 }
 
@@ -102,10 +108,6 @@ int main(int argc, char **argv)
     printf("Input string: \n");
 
     in = fopen(argv[1], "r");
-
-    // Handle file output
-    FILE *out;
-    out = fopen(argv[2], "w");
 
     char tempChar;
     char previousChar = ' ';
@@ -152,7 +154,6 @@ int main(int argc, char **argv)
         input[i].limit = charLimit;
         input[i].size = charLimit * i;
         input[i].symbol = strdup(inputString);
-        input[i].out = out;
         pthread_create(&tids[i], NULL, initiateCompression, &input[i]);
     }
 
@@ -161,6 +162,4 @@ int main(int argc, char **argv)
     {
         pthread_join(tids[i], NULL);
     }
-
-    fclose(out);
 }
