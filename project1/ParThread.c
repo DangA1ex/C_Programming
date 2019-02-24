@@ -156,7 +156,7 @@ int main(int argc, char **argv)
         input[i].limit = charLimit;
         input[i].size = charLimit * i;
         input[i].symbol = strdup(inputString);
-        input[i].argv2 = strdup(argv[2])
+        input[i].argv2 = strdup(argv[2]);
         pthread_create(&tids[i], NULL, initiateCompression, &input[i]);
     }
 
