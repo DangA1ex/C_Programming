@@ -13,7 +13,7 @@ struct Info
     int size;
     //The plus or minus symbol
     char *symbol;
-    //Handles closing the file so all threads can access it
+    char *argv2; 
 };
 
 void putCompression(FILE *out, int repeatedCount, char previousChar)
@@ -40,7 +40,7 @@ void* initiateCompression(void* arg)
     struct Info *input = (struct Info *)arg;
     // Handle file output
     FILE *out;
-    out = fopen(argv[2], "w");
+    out = fopen(input->argv2, "w");
     char previousChar = ' ';
     char currentChar;
     int repeatedCount = 0;
@@ -156,6 +156,7 @@ int main(int argc, char **argv)
         input[i].limit = charLimit;
         input[i].size = charLimit * i;
         input[i].symbol = strdup(inputString);
+        input[i].argv2 = strdup(argv[2])
         pthread_create(&tids[i], NULL, initiateCompression, &input[i]);
     }
 
