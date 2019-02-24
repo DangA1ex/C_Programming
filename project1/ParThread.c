@@ -85,11 +85,8 @@ void initiateCompression(void *arg)
 
 int main(int argc, char **argv)
 {
-    //Intializes a struct array for storing all the information
-    struct Info input[];
-
     // Handle file input and display selected files
-    FILE *fp;
+    FILE *in;
     printf("<-----------------------------------------------------------> \n");
     printf("                _                             \n");
     printf("               | |                             \n");
@@ -104,7 +101,7 @@ int main(int argc, char **argv)
     printf("<-----------------------------------------------------------> \n");
     printf("Input string: \n");
 
-    fp = fopen(argv[1], "r");
+    in = fopen(argv[1], "r");
 
     // Handle file output
     FILE *out;
@@ -153,16 +150,16 @@ int main(int argc, char **argv)
     for (int i = 0; i < numOfParts; i++)
     {
         input[i].limit = charLimit;
-        input[i].size = charLimt * i;
+        input[i].size = charLimit * i;
         input[i].symbol = strdup(inputString);
         input[i].out = out;
-        pthread_create(&tids[i], NULL, MyCompression, &input[i]);
+        pthread_create(&tids[i], NULL, initiateCompression, &input[i]);
     }
 
     //Closes multiple threads
     for (int i = 0; i < 10; i++)
     {
-        pthread_join(&tids[i], NULL);
+        pthread_join(tids[i], NULL);
     }
 
     fclose(out);
