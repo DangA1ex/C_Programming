@@ -1,55 +1,90 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <string.h>
 #include <pthread.h>
 
 //Struct to hold info to pass in multiple arguemenst to pthread
 struct Info
 {
+    int limit;
+    //The number of symbols
+    int size;
+    //The plus or minus symbol
+    char *symbol;
     //Handles closing the file so all threads can access it
     File *out;
-    //The number of symbols
-    int count;
-    //The plus or minus symbol
-    char symbol;
 };
 
-//I changed the arguement to make it work with pthreads
-void MyCompression(void *arg)
+void putCompression(FILE *out, int repeatedCount, char previousChar)
 {
-    //Allows me to access the values stored in the arguement
-    struct Info *input = (struct Info *)arg;
-    //input->counts allows me to take what is stored in input count
-    if (input->count >= 16)
+    if (repeatedCount >= 16)
     {
-        //input->symbol allows me to access what is stored in input symbol
-        if (input->symbol == '0')
+        if (previousChar == '0')
         {
-            //input->out allows me to access what is stroed in input *out
-            putc('-', input->out);
-            fprintf(input->out, "%d", repeatedCount);
-            putc('-', input->out);
+            putc('-', out);
+            fprintf(out, "%d", repeatedCount);
+            putc('-', out);
         }
-        else if (input->symbol == '1')
+        else if (previousChar == '1')
         {
-            putc('+', input->out);
-            fprintf(input->out, "%d", repeatedCount);
-            putc('+', input->out);
+            putc('+', out);
+            fprintf(out, "%d", repeatedCount);
+            putc('+', out);
         }
     }
-    //This exits the pthread
-    pthread.exit(0);
+}
+
+void initiateCompression(void *arg)
+{
+    struct Info *input = (struct Info *)arg;
+    char previousChar = ' ';
+    char currentChar;
+    int repeatedCount = 0;
+    int tempSharedIter = input->size;
+
+    // Used for 1's compression
+    for (int i = 0; i <= input->limit; i++)
+    {
+        currentChar = input->symbol[tempSharedIter];
+        if (currentChar != previousChar)
+        {
+            if (repeatedCount >= 16)
+            {
+                putCompression(input->out, repeatedCount, previousChar);
+            }
+            else
+            {
+                for (int i = 0; i < repeatedCount; i++)
+                {
+                    putc(previousChar, input->out);
+                }
+            }
+            repeatedCount = 0;
+        }
+        repeatedCount++;
+        previousChar = currentChar;
+        tempSharedIter++;
+    }
+
+    // For putting repeated 0's
+    if (repeatedCount != 0) {
+        if (repeatedCount >= 16) {
+            putCompression(input->out, repeatedCount, previousChar);
+        }
+        else {
+            for (int i = 0; i < repeatedCount; i++) {
+                putc(previousChar, input->out);
+            }
+        }
+    }
+
+    pthread_exit(0);
 }
 
 int main(int argc, char **argv)
 {
-    //Create thread IDs
-    pthread_t tids[];
-
-    //Creates multiple threads
-    for (int i = 0; i < 10; i++)
-    {
-        pthread_create(&tids[i], NULL, MyCompression, &input);
-    }
-
     //Intializes a struct array for storing all the information
     struct Info input[];
 
@@ -78,34 +113,50 @@ int main(int argc, char **argv)
     char tempChar;
     char previousChar = ' ';
     char currentChar;
-    int repeatedCount = 0;
+    int charCounter = 0;
+    int numOfParts = 0;
+    double charLimit = 36;
 
-    while ((tempChar = fgetc(fp)) != EOF)
+    // Find the Char Length of the Input File
+    while ((tempChar = fgetc(in)) != EOF)
     {
         currentChar = tempChar;
         printf("%c", currentChar);
-        if (currentChar != previousChar)
-        {
-            if (repeatedCount >= 16)
-            {
-                //Set the struct Info input values
-                input.out = out;
-                input.count = repeatedCount;
-                input.symbol = previousChar;
-
-                MyCompression(out, repeatedCount, previousChar);
-            }
-            else
-            {
-                for (int i = 0; i < repeatedCount; i++)
-                {
-                    putc(previousChar, out);
-                }
-            }
-            repeatedCount = 0;
-        }
-        repeatedCount++;
+        charCounter++;
         previousChar = currentChar;
+    }
+
+    // Divide the Char Limit in Input file by the set Char Limit
+    // for the number of forks.
+    numOfParts = (charCounter / charLimit);
+
+    char inputString[charCounter];
+    char tempString[charCounter];
+
+    // Used to reset the fgetc
+    rewind(in);
+
+    // Used fscanf here to ignore blank spaces for better
+    // compression in output file.
+    while (fscanf(in, "%s\n", tempString) != EOF)
+    {
+        strcat(inputString, tempString);
+    }
+
+    //Intializes a struct array for storing all the information
+    struct Info input[numOfParts];
+
+    //Create thread IDs
+    pthread_t tids[numOfParts];
+
+    //Creates multiple threads
+    for (int i = 0; i < numOfParts; i++)
+    {
+        input[i].limit = charLimit;
+        input[i].size = charLimt * i;
+        input[i].symbol = strdup(inputString);
+        input[i].out = out;
+        pthread_create(&tids[i], NULL, MyCompression, &input[i]);
     }
 
     //Closes multiple threads
@@ -113,7 +164,6 @@ int main(int argc, char **argv)
     {
         pthread_join(&tids[i], NULL);
     }
-
 
     fclose(out);
 }
