@@ -35,7 +35,7 @@ void putCompression(FILE *out, int repeatedCount, char previousChar)
     }
 }
 
-void initiateCompression(void *arg)
+void* initiateCompression(void* arg)
 {
     struct Info *input = (struct Info *)arg;
     // Handle file output
@@ -85,7 +85,7 @@ void initiateCompression(void *arg)
             }
         }
     }
-    
+    fclose(out);
     pthread_exit(0);
 }
 
@@ -142,6 +142,8 @@ int main(int argc, char **argv)
         strcat(inputString, tempString);
     }
 
+    fclose(in);
+
     //Intializes a struct array for storing all the information
     struct Info input[numOfParts];
 
@@ -158,7 +160,7 @@ int main(int argc, char **argv)
     }
 
     //Closes multiple threads
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < numOfParts; i++)
     {
         pthread_join(tids[i], NULL);
     }
