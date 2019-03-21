@@ -15,7 +15,7 @@ void producer(char *buffer)
     while (1)
     {
         sem_wait(&con);
-        while (count < MAX_SIZE)
+        if (count < MAX_SIZE)
         {
             pthread_mutex_lock(&bufLock);
             buffer[count] = 'a';
@@ -33,7 +33,7 @@ void consumer(char *buffer)
     while (1)
     {
         sem_wait(&pro);
-        while (count > 0)
+        if (count > 0)
         {
             pthread_mutex_lock(&bufLock);
             printf("Consumed an item. %c \n", buffer[count-1]);
